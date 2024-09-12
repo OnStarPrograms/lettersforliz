@@ -11,13 +11,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Playwrite+CU:wght@100..400&display=swap" rel="stylesheet">
 </head>
 
-<body>
+<body >
     <div id = "_former">
     <button onclick="loadform()">New Letter</button>
     </div> 
 
   <div id="sheets"></div>
-  <canvas id="myCanvas">
+  <canvas id="myCanvas" onmousemove="mouse_position(event)" onmouseclick="mouse_click(event)">
     
   </canvas>
   <iframe name="hiddenFrame" width="0" height="0" border="0" style="display: none;"></iframe>

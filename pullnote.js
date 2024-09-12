@@ -22,6 +22,14 @@ red_sticky.src = "./Stickies/RedSticky.svg";
 var red2_sticky = new Image();
 red2_sticky.src = "./Stickies/RedSticky2.svg";
 var bimg = new Image();
+var posX;
+var posY;
+var RightClick = false;
+var clicked = false;
+var mouseDown = false;
+var mousedowncount = 0;
+
+
 
 bimg.src = './background.png';
 
@@ -57,6 +65,30 @@ function randomXY()
   }
 }
 
+function mouse_position(event)
+{
+    try {
+      posX = event.clientX-15;
+      posY = event.clientY-62;
+      
+     
+    } catch (error) {
+      ;
+    }
+    console.log(posX);
+}
+
+addEventListener("mousedown", (event) => {
+  mouseDown = true;
+  mousedowncount = 0;
+});
+addEventListener("mouseup", (event) => {
+  mouseDown = false;
+   if (mousedowncount < 1)
+   {
+    clicked = true;
+   }
+});
 function DrawSticky()
 { //TimeStamp
   //Name
@@ -70,12 +102,14 @@ function DrawSticky()
   const ptrn = ctx.createPattern(bimg, 'repeat'); // Create a pattern with this image, and set it to "repeat".
   ctx.fillStyle = ptrn;
   ctx.fillRect(0, 0, c.width, c.height);
+  if ((MNotes.length/4) > (Coord.length/3)){
+    randomXY();
+  }
   while (MNotes.length>0){
     ctx.fillStyle = '#f007b9';
     ctx.strokeStyle = 'black';
     ctx.lineWidth = 5;
-
-    switch (Coord[i+2]) {
+       switch (Coord[i+2]) {
       case 0:
         
         ctx.drawImage(blue_sticky, Coord[i]-30,Coord[i+1]-15, 300, 300);
@@ -105,27 +139,32 @@ function DrawSticky()
     
     ctx.fillText(MNotes.pop(), Coord[i]+130, Coord[i+1]+160);
     let MNText = MNotes.pop();
-    
+  if (mouseDown)
+    {
+      if (Coord[i]-30 < posX && posX <  Coord[i]-30+200 && Coord[i+1]-15 < posY && posY <  Coord[i+1]-15+200){
+        console.log("mouse down");
+        mousedowncount += 1;
+      }
+    }
+
+
+    if (clicked)
+    {
+      if (Coord[i]-30 < posX && posX <  Coord[i]-30+200 && Coord[i+1]-15 < posY && posY <  Coord[i+1]-15+200){
+        alert(MNText);
+      }
+    }
+    //if (clicked && lastmousedown == true)
+    //{
+      //lastmousedown = false;
+      //clicked = false;
+    //}
+  
     MNText = MNText.split(" ");
     let k = 0;
     let l = -10;
     let lettercount = 10;
-    for (let j = 0; j < MNText.length; j++){
-      if (lettercount <= 5){
-        k = k + 20;
-        l = -10;
-        lettercount = 20;
-      }
-      if (MNText[j][0] == "<")
-      {
-        ctx.fillText(MNText[j], Coord[i]+140, Coord[i+1]+40);
-      }
-      else{
-        ctx.fillText(MNText[j], Coord[i]+20+l, Coord[i+1]+90+k);
-      }
-      l+=7*(MNText[j].length+2);
-      lettercount -= MNText[j].length;
-    }
+        ctx.fillText(MNText[0]+" "+MNText[1]+"...", Coord[i]+20+l, Coord[i+1]+90+k);
     ctx.font = "30px Georgia";
     ctx.fillText(MNotes.pop(), Coord[i]+10, Coord[i+1]+40);
     ctx.font = "10px Georgia";
@@ -133,6 +172,8 @@ function DrawSticky()
 
     i+=3;
   }
+  clicked = false;
+  RightClick = false;
 }
 
 
@@ -214,4 +255,15 @@ function LoadResources(){
     });
     setTimeout(LoadResources, 1000);
 }
+window.oncontextmenu = function ()
+{
+    RightClick = true;
+    return false;     // cancel default menu
+}
+setInterval(() => {
+  mouse_position();
+}, 500);
+//setInterval(() => {
+  //if (mousedown + lastmousedown )
+//}, 1000);
 LoadResources();
